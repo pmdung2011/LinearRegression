@@ -19,8 +19,8 @@ sc = StandardScaler()
 X_in = sc.fit_transform(X_in)
 
 # INITIALIZE COEFFICIENTS
-learning_rate = 0.005
-iterations = 10000
+learning_rate = 0.5
+iterations = 1000
 B = np.zeros(X_in.shape[1])  # Initialize values of thetas
 
 
@@ -62,16 +62,29 @@ def r_mse(Y, Y_predict):
     return np.sqrt(sum((Y - Y_predict) ** 2) / len(Y))
 
 
+# Log file
+def log_file(steps, itr, c):
+    file = open("log.txt", "a")
+    file.write("Learning_rate: {} \n".format(str(steps)))
+    file.write("Iterations: {} \n".format(str(itr)))
+    file.write("Cost: {} \n".format(str(c)))
+    file.close()
+
+
+log_file(learning_rate, iterations, cost_arr[-1])
+
+
 Y_pred = X_test.dot(b)
 rmse = r_mse(Y_test, Y_pred)
 print("RMSE: ", rmse)
 # CREATE PLOT FIGURES
-fig, ax = plt.subplots(1)  # Cost figure
-# fig2, ax2 = plt.subplots(1)  # Data figure
-
+# fig, ax = plt.subplots(1)  # Cost figure
+# fig2, ax2 = plt.subplots(1)  # Data figures
 # fig2 = plt.figure()
 # ax2 = Axes3D(fig2)
 # ax2.scatter(X_in[0], X_in[1], Y_in, color='#ef1234')
-
-ax.plot(iteration_nums, cost_arr)
+# ax.plot(iteration_nums, cost_arr)
+plt.plot(iteration_nums, cost_arr)
+plt.xlabel("Iterations")
+plt.ylabel("Cost")
 plt.show()
