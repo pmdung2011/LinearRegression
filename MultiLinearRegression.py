@@ -7,27 +7,34 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from mpl_toolkits.mplot3d import Axes3D
 
+
 # style.use('ggplot')
 
 # RETRIEVE TRAINING DATA
-data = pd.read_excel('https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls')
-X_in = data.iloc[:, 0:8]  # Get the first eight columns of data
-Y_in = data.iloc[:, -1]
+df = pd.read_excel('https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls')
+X_in = df.iloc[:, 0:8]  # Get the features
+Y_in = df.iloc[:, -1]
 
-# STANDARDIZE DATA
-sc = StandardScaler()
-X_in = sc.fit_transform(X_in)
+
+
+# NORMALIZE DATA
+X_in = preprocessing.normalize(X_in, norm='l2')
+
 
 # INITIALIZE COEFFICIENTS
 learning_rate = 0.5
-iterations = 1000
+iterations = 10000
 B = np.zeros(X_in.shape[1])  # Initialize values of thetas
 
 
 # COST MSE
 def cost_function(X, Y, B):
     n = len(Y)
-    return np.sum((X.dot(B) - Y) ** 2) / (2 * n)
+    predictions = X.dot(B).flatten()
+    sqErrors = (predictions - Y) ** 2
+    J = (1.0 / (2 * n)) * sqErrors.sum()
+    return J
+    
 
 
 initial_cost = cost_function(X_in, Y_in, B)
@@ -51,6 +58,7 @@ def gradient_descent(X, Y, B_cur):
 
 # SPLITTING DATASET TO TRAINING AND TESTING SETS
 X_train, X_test, Y_train, Y_test = train_test_split(X_in, Y_in, test_size=0.2, random_state=0)
+
 
 b, cost_arr, iteration_nums = gradient_descent(X_train, Y_train, B)
 # print(b)
